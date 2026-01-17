@@ -34,3 +34,4 @@ Algorithm Explanation and Justification :
             Handover Strategy: By setting left_overs = NULL at the start, I ensure that the function "owns" the memory locally. If the function crashes or returns early, the static variable isn't pointing to freed memory.
             Heap-Based Buffering: Using malloc for the read buffer (instead of a stack array) ensures we can handle a BUFFER_SIZE of 10,000,000 without a stack overflow.
             Systematic Freeing: Every ft_strjoin or ft_extract_str result replaces an old pointer, which is immediately freed to prevent accumulation...
+            

@@ -1,15 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yelallam <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/13 14:15:27 by yelallam          #+#    #+#             */
-/*   Updated: 2026/01/14 13:08:47 by yelallam         ###   ########.fr       */
+/*   Created: 2026/01/14 15:13:29 by yelallam          #+#    #+#             */
+/*   Updated: 2026/01/16 17:59:30 by yelallam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*handle_extraction(char **line, char *nl_pos)
 {
@@ -64,23 +64,23 @@ static int	read_and_join(int fd, char **line,
 
 char	*get_next_line(int fd)
 {
-	static char	*left_overs;
+	static char	*left_overs[1024];
 	ssize_t		bytes_read;
 
 	char *line, *(nl_pos), *(buffer);
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (handle_error(left_overs, -1));
+	if (fd < 0 || fd >= 1024 || BUFFER_SIZE <= 0)
+		return (NULL);
 	buffer = malloc(BUFFER_SIZE + 1);
 	if (!buffer)
-		return (handle_error(left_overs, -1));
-	line = left_overs;
-	left_overs = NULL;
+		return (handle_error(left_overs[fd], -1));
+	line = left_overs[fd];
+	left_overs[fd] = NULL;
 	while (1)
 	{
 		nl_pos = ft_strchr(line, '\n');
 		if (nl_pos)
 		{
-			process_line(&line, &left_overs, nl_pos);
+			process_line(&line, &left_overs[fd], nl_pos);
 			break ;
 		}
 		if (read_and_join(fd, &line, buffer, &bytes_read))
@@ -89,16 +89,3 @@ char	*get_next_line(int fd)
 	free(buffer);
 	return (line);
 }
-/*int main()
-{
-    int fd = open("file.txt", O_RDONLY);
-    char *line;
-    printf("%s", line = get_next_line(fd));
-    free(line);
-    printf("%s", line = get_next_line(fd));
-    free(line);
-    printf("%s", line = get_next_line(fd));
-    free(line);
-
-    close(fd);
-}*/
